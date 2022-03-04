@@ -1,0 +1,16 @@
+{
+  "name": "preference-center-api",
+  "version": "1.0.0",
+  "main": "dist/server.js",
+  "repository": "git@github.com:mdcharaf/preference-center-api.git",
+  "author": "Muhammad Charaf <muhammad.charaf@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon src/server.ts"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15",
+    "ts-standard": "^11.0.0",
+    "typescript": "^4.6.2"
+  }
+}
