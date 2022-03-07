@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid'
 import _ from 'lodash'
 import * as EmailValidator from 'email-validator'
 import { UniqueConstraintError } from 'sequelize'
+import { Event } from '../models'
 
 export default class UserController {
   public getOne (req: Request, res: Response): void {
@@ -14,9 +15,30 @@ export default class UserController {
       return
     }
 
-    User.findByPk(id)
-      .then(user => res.status(200).json({ ...user?.props() }))
-      .catch(() => res.status(404).json({ error: 'User doesn not exists ' }))
+    User.findByPk(id, {
+      include: Event,
+      order: [
+        // Try to figure out how to order stuff explicitly
+        // [User, Event, 'createdAt', 'ASC']
+      ]
+    })
+      .then(user => {
+        if (_.isNil(user)) {
+          res.status(404).json({ error: 'User doesn not exists ' })
+          return
+        }
+
+        res.status(200).json({
+          user: {
+            id: user.props().id
+          },
+          consents: user.props().events?.map(event => ({
+            id: event.consentId,
+            enabled: event.enabled
+          }))
+        })
+      })
+      .catch((error) => res.status(400).json({ error }))
   }
 
   public create (req: Request, res: Response): void {

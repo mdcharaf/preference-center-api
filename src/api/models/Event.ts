@@ -1,9 +1,9 @@
-import { Table, Column, Model, DataType, PrimaryKey, ForeignKey } from 'sequelize-typescript'
+import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo } from 'sequelize-typescript'
 import { InferAttributes, InferCreationAttributes } from 'sequelize/types'
 import { User } from './User'
 
 @Table
-export class Event extends Model<InferAttributes<Event>, InferCreationAttributes<Event>> {
+export class Event extends Model<InferAttributes<Event, { omit: 'user' }>, InferCreationAttributes<Event, { omit: 'user'}>> {
   @PrimaryKey
   @Column({ type: DataType.UUID })
   public id?: string
@@ -17,6 +17,9 @@ export class Event extends Model<InferAttributes<Event>, InferCreationAttributes
   @ForeignKey(() => User)
   @Column({ type: DataType.UUID })
   public userId!: string
+
+  @BelongsTo(() => User)
+  public user!: User
 
   props (): Partial<Event> {
     return {
