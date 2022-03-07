@@ -1,28 +1,19 @@
-import { Table, Column, Model, PrimaryKey, CreatedAt, UpdatedAt } from 'sequelize-typescript'
-
+import { Table, Column, Model, DataType } from 'sequelize-typescript'
+import { InferAttributes, InferCreationAttributes } from 'sequelize/types'
 @Table
-export class User extends Model<User> {
-  @PrimaryKey
-  @Column
-  public id!: any
+export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+  @Column({ type: DataType.UUID, primaryKey: true })
+  public id?: string
 
-  @Column
+  @Column({ type: DataType.STRING })
   public email!: string
 
-  @Column
+  @Column({ type: DataType.STRING })
   public password!: string
-
-  @Column
-  @CreatedAt
-  public createdAt: Date = new Date()
-
-  @Column
-  @UpdatedAt
-  public updatedAt: Date = new Date()
 
   props (): Partial<User> {
     return {
-      id: this.id as string,
+      id: this.id,
       email: this.email
     }
   }

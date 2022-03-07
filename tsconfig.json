@@ -5,8 +5,9 @@
     "noImplicitAny": true,
     "strict": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true,
     "skipLibCheck": true,
-    "declaration": true
+    "declaration": true,
+    "target": "es6",
+    "moduleResolution": "node"
   }
 }
