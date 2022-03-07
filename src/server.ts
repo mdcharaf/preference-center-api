@@ -1,20 +1,22 @@
 import express from 'express'
 import { AppRouter } from './api/routes'
 import { Sequelize, SequelizeOptions } from 'sequelize-typescript'
+import { User } from './api/models/User'
 
 async function setupSequelize (): Promise<void> {
   const sequelize = new Sequelize({
     database: 'didomi',
     host: 'localhost',
-    dialect: 'postgres',
-    storage: ':memory:'
+    dialect: 'postgres'
   } as unknown as SequelizeOptions)
 
   try {
     await sequelize.authenticate()
+    await sequelize.addModels([User])
+    await sequelize.sync()
     console.log('Connection has been established successfully')
   } catch (error) {
-    console.error('Unable to connect to the database:', error)
+    console.error('Error setting up sequelize ORM', error)
   }
 }
 
