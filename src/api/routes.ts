@@ -1,5 +1,5 @@
 import { Router, IRouter } from 'express'
-import { userController } from './controllers'
+import { eventController, userController } from './controllers'
 
 const router: IRouter = Router()
 
@@ -7,5 +7,8 @@ const router: IRouter = Router()
 router.post('/user', userController.create)
 router.delete('/user/:id', userController.delete)
 router.get('/user/:id', userController.getOne)
+
+// Event
+router.post('/event', eventController.create)
 
 export { router as AppRouter }

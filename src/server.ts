@@ -1,7 +1,7 @@
 import express from 'express'
 import { AppRouter } from './api/routes'
 import { Sequelize, SequelizeOptions } from 'sequelize-typescript'
-import { User } from './api/models/User'
+import { User, Event } from './api/models'
 import bodyParser from 'body-parser'
 
 async function setupSequelize (): Promise<void> {
@@ -13,7 +13,7 @@ async function setupSequelize (): Promise<void> {
 
   try {
     await sequelize.authenticate()
-    await sequelize.addModels([User])
+    await sequelize.addModels([User, Event])
     await sequelize.sync()
     console.log('Connection has been established successfully')
   } catch (error) {
