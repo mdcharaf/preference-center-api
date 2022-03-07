@@ -5,11 +5,8 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
   @Column({ type: DataType.UUID, primaryKey: true })
   public id?: string
 
-  @Column({ type: DataType.STRING })
+  @Column({ type: DataType.STRING, unique: true })
   public email!: string
-
-  @Column({ type: DataType.STRING })
-  public password!: string
 
   props (): Partial<User> {
     return {

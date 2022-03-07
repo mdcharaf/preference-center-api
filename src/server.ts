@@ -2,6 +2,7 @@ import express from 'express'
 import { AppRouter } from './api/routes'
 import { Sequelize, SequelizeOptions } from 'sequelize-typescript'
 import { User } from './api/models/User'
+import bodyParser from 'body-parser'
 
 async function setupSequelize (): Promise<void> {
   const sequelize = new Sequelize({
@@ -26,10 +27,7 @@ async function setupSequelize (): Promise<void> {
   const app = express()
   const port = process.env.PORT ?? 8080
 
-  app.get('/', (_, res) => {
-    res.send('Helloo')
-  })
-
+  app.use(bodyParser.json())
   app.use('/api', AppRouter)
 
   app.listen(port, () => {
