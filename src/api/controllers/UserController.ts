@@ -23,6 +23,12 @@ export default class UserController {
 
   public async getOne (req: Request, res: Response): Promise<void> {
     const { id } = req.params
+
+    if (_.isNil(id)) {
+      res.status(400).json({ error: 'Bad parameters' })
+      return
+    }
+
     try {
       const user = await this.repo.get(id)
 
@@ -49,6 +55,11 @@ export default class UserController {
   public async create (req: Request, res: Response): Promise<void> {
     const { email } = req.body
 
+    if (_.isNil(email)) {
+      res.status(400).json({ error: 'Missing attributes' })
+      return
+    }
+
     if (_.isNil(email) || !EmailValidator.validate(email)) {
       res.status(422).json({ error: 'Invalid email address' })
       return
@@ -68,6 +79,9 @@ export default class UserController {
 
   public async delete (req: Request, res: Response): Promise<void> {
     const { id } = req.params
+    if (_.isNil(id)) {
+      res.status(400).json({ error: 'Bad parameters' })
+    }
 
     try {
       await this.repo.delete(id)

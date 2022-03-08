@@ -100,6 +100,18 @@ describe('UserController', () => {
       // Assert
       expect(httpStatusCode).toEqual(400)
     })
+
+    test('should return bad request when missing body attributes', async () => {
+      // Arrange
+      const request: Partial<Request> = { body: {} }
+      const controller = new UserController(repoMock as IUserRepository, fnUUID)
+
+      // Act
+      await controller.create(request as Request, responseMock as Response)
+
+      // Assert
+      expect(httpStatusCode).toEqual(400)
+    })
   })
 
   describe('delete', () => {
@@ -121,6 +133,18 @@ describe('UserController', () => {
       const request: Partial<Request> = { params: { userId: dummyId } }
       const controller = new UserController(repoMock as IUserRepository, fnUUID)
       repoMock.delete = (_) => { throw new Error() }
+
+      // Act
+      await controller.delete(request as Request, responseMock as Response)
+
+      // Assert
+      expect(httpStatusCode).toEqual(400)
+    })
+
+    test('should return bad request when missing parameter', async () => {
+      // Arrange
+      const request: Partial<Request> = { params: {} }
+      const controller = new UserController(repoMock as IUserRepository, fnUUID)
 
       // Act
       await controller.delete(request as Request, responseMock as Response)
@@ -164,6 +188,18 @@ describe('UserController', () => {
 
       // Assert
       expect(httpStatusCode).toEqual(404)
+    })
+
+    test('should return bad request when missing parameter', async () => {
+      // Arrange
+      const request: Partial<Request> = { params: {} }
+      const controller = new UserController(repoMock as IUserRepository, fnUUID)
+
+      // Act
+      await controller.getOne(request as Request, responseMock as Response)
+
+      // Assert
+      expect(httpStatusCode).toEqual(400)
     })
   })
 })
