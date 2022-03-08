@@ -5,15 +5,22 @@
   "repository": "git@github.com:mdcharaf/preference-center-api.git",
   "author": "Muhammad Charaf <muhammad.charaf@gmail.com>",
   "license": "MIT",
+  "ts-standard": {
+    "ignore": [ "src/api/routes.ts"]
+  },
   "scripts": {
-    "dev": "nodemon src/server.ts"
+    "dev": "nodemon src/server.ts",
+    "test": "jest -c jest.config.json"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
+    "@types/jest": "^27.4.1",
     "@types/node": "^17.0.21",
     "@types/sequelize": "^4.28.11",
+    "jest": "^27.5.1",
     "nodemon": "^2.0.15",
+    "ts-jest": "^27.1.3",
     "ts-node-dev": "^1.1.8",
     "ts-standard": "^11.0.0",
     "typescript": "^4.6.2"

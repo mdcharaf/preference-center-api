@@ -1,5 +1,4 @@
 import { Request, Response } from 'express'
-import { v4 as uuid } from 'uuid'
 import _ from 'lodash'
 import * as EmailValidator from 'email-validator'
 import { UniqueConstraintError } from 'sequelize'
@@ -7,13 +6,19 @@ import { IUserRepository } from '../repositories/UserReporistory'
 
 export default class UserController {
   private readonly repo: IUserRepository
+  private readonly fnUUID: () => string
 
-  constructor (repo: IUserRepository) {
+  constructor (repo: IUserRepository, fnUUID: () => string) {
     if (_.isNil(repo)) {
       throw new Error('Missing UserRepository')
     }
 
+    if (!_.isFunction(fnUUID)) {
+      throw new Error('fnUUID is not a function')
+    }
+
     this.repo = repo
+    this.fnUUID = fnUUID
   }
 
   public getOne (req: Request, res: Response): void {
@@ -45,7 +50,7 @@ export default class UserController {
       .catch((error) => res.status(400).json({ error }))
   }
 
-  public create (req: Request, res: Response): void {
+  public async create (req: Request, res: Response): Promise<void> {
     const { email } = req.body
 
     if (_.isNil(email) || !EmailValidator.validate(email)) {
@@ -53,31 +58,26 @@ export default class UserController {
       return
     }
 
-    this.repo.create({
-      id: uuid(),
-      email
-    })
-      .then(user => res.status(201).json({ ...user?.props() }))
-      .catch(err => {
-        if (err instanceof UniqueConstraintError) {
-          res.status(422).json({ error: 'Email already exists' })
-          return
-        }
-
-        res.status(400).json({ error: err })
-      })
+    try {
+      const user = await this.repo.create({ id: this.fnUUID(), email })
+      res.status(201).json({ ...user?.props() })
+    } catch (err) {
+      if (err instanceof UniqueConstraintError) {
+        res.status(422).json({ error: 'Email already exists' })
+        return
+      }
+      res.status(400).json({ error: err })
+    }
   }
 
-  public delete (req: Request, res: Response): void {
+  public async delete (req: Request, res: Response): Promise<void> {
     const { id } = req.params
 
-    if (_.isNil(id)) {
-      res.status(422).json({ error: 'Invalid user id' })
-      return
+    try {
+      await this.repo.delete(id)
+      res.status(200).json({ message: 'successfully deleted' })
+    } catch (error) {
+      res.status(400).json({ error })
     }
-
-    this.repo.delete(id)
-      .then(_ => res.status(200).json({ message: 'Successfully deleted' }))
-      .catch(error => res.status(400).json({ error }))
   }
 }
