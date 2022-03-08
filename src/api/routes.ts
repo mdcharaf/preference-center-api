@@ -9,6 +9,6 @@ router.delete('/user/:id', userController.delete.bind(userController))
 router.get('/user/:id', userController.getOne.bind(userController))
 
 // Event
-router.post('/event', eventController.create)
+router.post('/event', eventController.create.bind(eventController))
 
 export { router as AppRouter }

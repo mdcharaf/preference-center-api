@@ -1,10 +1,20 @@
 import { Request, Response } from 'express'
 import _ from 'lodash'
 import { Event } from '../models'
-import { v4 as uuid } from 'uuid'
 import { ForeignKeyConstraintError } from 'sequelize'
+import { IEventRepository } from '../repositories'
 
 export default class EventController {
+  private readonly repo: IEventRepository
+
+  constructor (repo: IEventRepository) {
+    if (_.isNil(repo)) {
+      throw new Error('Invalid repo argument')
+    }
+
+    this.repo = repo
+  }
+
   public create (req: Request, res: Response): void {
     const { userId, consentId, enabled } = req.body
 
@@ -23,12 +33,7 @@ export default class EventController {
       return
     }
 
-    Event.create({
-      id: uuid(),
-      consentId,
-      userId,
-      enabled
-    })
+    this.repo.create(new Event({ consentId, userId, enabled }))
       .then(event =>
         res.status(201).json({ ...event.props() })
       )
