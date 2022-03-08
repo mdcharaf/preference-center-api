@@ -21,33 +21,29 @@ export default class UserController {
     this.fnUUID = fnUUID
   }
 
-  public getOne (req: Request, res: Response): void {
+  public async getOne (req: Request, res: Response): Promise<void> {
     const { id } = req.params
+    try {
+      const user = await this.repo.get(id)
 
-    if (_.isNil(id)) {
-      res.status(422).json({ error: 'Invalid user id' })
-      return
-    }
+      if (_.isNil(user) || _.isEmpty(user)) {
+        res.status(404).json({ error: 'User doesn not exists ' })
+        return
+      }
 
-    this.repo.get(id)
-      .then(user => {
-        if (_.isNil(user)) {
-          res.status(404).json({ error: 'User doesn not exists ' })
-          return
-        }
-
-        res.status(200).json({
-          user: {
-            id: user.props().id,
-            email: user.props().email
-          },
-          consents: user.props().events?.map(event => ({
-            id: event.consentId,
-            enabled: event.enabled
-          }))
-        })
+      res.status(200).json({
+        user: {
+          id: user.props().id,
+          email: user.props().email
+        },
+        consents: user.props().events?.map(event => ({
+          id: event.consentId,
+          enabled: event.enabled
+        }))
       })
-      .catch((error) => res.status(400).json({ error }))
+    } catch (error) {
+      res.status(400).json({ error })
+    }
   }
 
   public async create (req: Request, res: Response): Promise<void> {

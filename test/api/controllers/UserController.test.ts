@@ -1,24 +1,36 @@
 import { Request, Response } from 'express'
 import { UniqueConstraintError } from 'sequelize'
 import UserController from '../../../src/api/controllers/UserController'
-import { User } from '../../../src/api/models'
+import { User, Event } from '../../../src/api/models'
 import { IUserRepository } from '../../../src/api/repositories'
 
 describe('UserController', () => {
   const dummyEmail = 'test@test.com'
   const dummyId = '00000000-0000-0000-0000-000000000000'
+  const dummyEvents: Array<Partial<Event>> = [
+    { id: dummyId, consentId: 'email_notifications', enabled: true },
+    { id: dummyId, consentId: 'sms_notifications', enabled: false }
+  ]
+  const dummyUser: Partial<User> = {
+    id: dummyId,
+    email: dummyEmail,
+    events: dummyEvents.map(ev => ev as Event),
+    props: (): Partial<User> => ({ id: dummyId, email: dummyEmail, events: dummyEvents.map(ev => ev as Event) })
+  }
+
   const fnUUID = (): string => dummyId
   const repoMock = {
     create: async ({ id, email }: { id: string, email: string }): Promise<User | null> => {
       const user: Partial<User> = { id, email, props: (): Partial<User> => ({ id, email }) }
       return await Promise.resolve(user as User)
     },
-    delete: async (userId: string): Promise<void> => {}
+    delete: async (_: string): Promise<void> => {},
+    get: async (_: string): Promise<User | null> => await Promise.resolve(dummyUser as User)
   }
+  const responseMock: Partial<Response> = {}
+
   let httpStatusCode = {}
   let httpResult = {}
-
-  const responseMock: Partial<Response> = {}
 
   beforeEach(() => {
     httpResult = {}
@@ -93,7 +105,7 @@ describe('UserController', () => {
   describe('delete', () => {
     test('should delete user when delete is called', async () => {
       // Arrange
-      const request: Partial<Request> = { params: { userId: dummyId } }
+      const request: Partial<Request> = { params: { id: dummyId } }
       const controller = new UserController(repoMock as IUserRepository, fnUUID)
 
       // Act
@@ -115,6 +127,43 @@ describe('UserController', () => {
 
       // Assert
       expect(httpStatusCode).toEqual(400)
+    })
+  })
+
+  describe('getOne', () => {
+    test('should return user when user exists', async () => {
+      // Arrange
+      const request: Partial<Request> = { params: { id: dummyId } }
+      const controller = new UserController(repoMock as IUserRepository, fnUUID)
+
+      // Act
+      await controller.getOne(request as Request, responseMock as Response)
+
+      // Assert
+      expect(httpStatusCode).toEqual(200)
+      expect(httpResult).toEqual({
+        user: {
+          id: dummyId,
+          email: dummyEmail
+        },
+        consents: dummyEvents.map(event => ({
+          id: event.consentId,
+          enabled: event.enabled
+        }))
+      })
+    })
+
+    test('should return not found response when user does not exist', async () => {
+      // Arrange
+      const request: Partial<Request> = { params: { id: dummyId } }
+      const controller = new UserController(repoMock as IUserRepository, fnUUID)
+      repoMock.get = async (_) => await Promise.resolve(null)
+
+      // Act
+      await controller.getOne(request as Request, responseMock as Response)
+
+      // Assert
+      expect(httpStatusCode).toEqual(404)
     })
   })
 })
