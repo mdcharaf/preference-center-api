@@ -24,7 +24,8 @@ export class Event extends Model<InferAttributes<Event, { omit: 'user' }>, Infer
   props (): Partial<Event> {
     return {
       consentId: this.consentId,
-      enabled: this.enabled
+      enabled: this.enabled,
+      userId: this.userId
     }
   }
 }

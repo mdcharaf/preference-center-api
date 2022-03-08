@@ -33,7 +33,8 @@ export default class UserController {
 
         res.status(200).json({
           user: {
-            id: user.props().id
+            id: user.props().id,
+            email: user.props().email
           },
           consents: user.props().events?.map(event => ({
             id: event.consentId,
