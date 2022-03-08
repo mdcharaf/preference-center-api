@@ -3,6 +3,7 @@ import { UniqueConstraintError } from 'sequelize'
 import UserController from '../../../src/api/controllers/UserController'
 import { User, Event } from '../../../src/api/models'
 import { IUserRepository } from '../../../src/api/repositories'
+import { mockResponse } from '../../utils/mocks'
 
 describe('UserController', () => {
   const dummyEmail = 'test@test.com'
@@ -29,22 +30,16 @@ describe('UserController', () => {
   }
   const responseMock: Partial<Response> = {}
 
-  let httpStatusCode = {}
-  let httpResult = {}
+  const result = {
+    statusCode: {},
+    json: {}
+  }
 
   beforeEach(() => {
-    httpResult = {}
-    httpStatusCode = {}
+    result.statusCode = {}
+    result.json = {}
 
-    responseMock.status = jest.fn().mockImplementation((status) => {
-      httpStatusCode = status
-      responseMock.statusCode = status
-      return responseMock
-    })
-    responseMock.json = jest.fn().mockImplementation((result) => {
-      httpResult = result
-      return responseMock
-    })
+    mockResponse(responseMock, result)
   })
 
   describe('create', () => {
@@ -57,8 +52,8 @@ describe('UserController', () => {
       await controller.create(request as Request, responseMock as Response)
 
       // Assert
-      expect(httpStatusCode).toEqual(201)
-      expect(httpResult).toEqual({ id: dummyId, email: dummyEmail })
+      expect(result.statusCode).toEqual(201)
+      expect(result.json).toEqual({ id: dummyId, email: dummyEmail })
     })
 
     test('should return unprocessible entity when invalid email address', async () => {
@@ -70,8 +65,8 @@ describe('UserController', () => {
       await controller.create(request as Request, responseMock as Response)
 
       // Assert
-      expect(httpStatusCode).toEqual(422)
-      expect(httpResult).toEqual({ error: 'Invalid email address' })
+      expect(result.statusCode).toEqual(422)
+      expect(result.json).toEqual({ error: 'Invalid email address' })
     })
 
     test('should return unprocessible entity when email address already exists', async () => {
@@ -84,8 +79,8 @@ describe('UserController', () => {
       await controller.create(request as Request, responseMock as Response)
 
       // Assert
-      expect(httpStatusCode).toEqual(422)
-      expect(httpResult).toEqual({ error: 'Email already exists' })
+      expect(result.statusCode).toEqual(422)
+      expect(result.json).toEqual({ error: 'Email already exists' })
     })
 
     test('should return bad request when an error is thrown', async () => {
@@ -98,7 +93,7 @@ describe('UserController', () => {
       await controller.create(request as Request, responseMock as Response)
 
       // Assert
-      expect(httpStatusCode).toEqual(400)
+      expect(result.statusCode).toEqual(400)
     })
 
     test('should return bad request when missing body attributes', async () => {
@@ -110,7 +105,7 @@ describe('UserController', () => {
       await controller.create(request as Request, responseMock as Response)
 
       // Assert
-      expect(httpStatusCode).toEqual(400)
+      expect(result.statusCode).toEqual(400)
     })
   })
 
@@ -124,8 +119,8 @@ describe('UserController', () => {
       await controller.delete(request as Request, responseMock as Response)
 
       // Assert
-      expect(httpStatusCode).toEqual(200)
-      expect(httpResult).toEqual({ message: 'successfully deleted' })
+      expect(result.statusCode).toEqual(200)
+      expect(result.json).toEqual({ message: 'successfully deleted' })
     })
 
     test('should return bad request when failed to delete', async () => {
@@ -138,7 +133,7 @@ describe('UserController', () => {
       await controller.delete(request as Request, responseMock as Response)
 
       // Assert
-      expect(httpStatusCode).toEqual(400)
+      expect(result.statusCode).toEqual(400)
     })
 
     test('should return bad request when missing parameter', async () => {
@@ -150,7 +145,7 @@ describe('UserController', () => {
       await controller.delete(request as Request, responseMock as Response)
 
       // Assert
-      expect(httpStatusCode).toEqual(400)
+      expect(result.statusCode).toEqual(400)
     })
   })
 
@@ -164,8 +159,8 @@ describe('UserController', () => {
       await controller.getOne(request as Request, responseMock as Response)
 
       // Assert
-      expect(httpStatusCode).toEqual(200)
-      expect(httpResult).toEqual({
+      expect(result.statusCode).toEqual(200)
+      expect(result.json).toEqual({
         user: {
           id: dummyId,
           email: dummyEmail
@@ -187,7 +182,7 @@ describe('UserController', () => {
       await controller.getOne(request as Request, responseMock as Response)
 
       // Assert
-      expect(httpStatusCode).toEqual(404)
+      expect(result.statusCode).toEqual(404)
     })
 
     test('should return bad request when missing parameter', async () => {
@@ -199,7 +194,7 @@ describe('UserController', () => {
       await controller.getOne(request as Request, responseMock as Response)
 
       // Assert
-      expect(httpStatusCode).toEqual(400)
+      expect(result.statusCode).toEqual(400)
     })
   })
 })
