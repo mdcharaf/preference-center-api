@@ -1,0 +1,173 @@
+---
+swagger: "2.0"
+info:
+  description: User Preferences API
+  version: 1.0.0
+  title: Preference Center API
+  contact:
+    email: muhammad.charaf@gmail.com
+host: virtserver.swaggerhub.com
+basePath: /mdcharaf/PreferenceCenterApi/1.0.0
+schemes:
+- https
+paths:
+  /api/user/{userId}:
+    get:
+      summary: gets user
+      description: |
+        Get User and corresponding events
+      operationId: UserController@getOne
+      produces:
+      - application/json
+      parameters:
+      - name: userId
+        in: path
+        description: required userId parameter
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Gets user and corresponding events
+          schema:
+            $ref: '#/definitions/User'
+        "400":
+          description: bad input parameter
+        "404":
+          description: User does not exists
+    delete:
+      summary: deletes user
+      description: |
+        deletes user
+      operationId: UserController@delete
+      produces:
+      - application/json
+      parameters:
+      - name: userId
+        in: path
+        description: required userId parameter
+        required: true
+        type: string
+      responses:
+        "200":
+          description: deletes user
+        "400":
+          description: bad input parameter
+  /api/user:
+    post:
+      summary: Add User
+      description: |
+        Inserts User
+      operationId: UserController@create
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/body'
+      responses:
+        "201":
+          description: Gets user and corresponding events
+          schema:
+            $ref: '#/definitions/inline_response_201'
+        "400":
+          description: bad input parameter
+        "422":
+          description: |
+            User already exists
+            Invalid email address
+  /api/Event:
+    post:
+      summary: Add Event
+      description: |
+        Inserts Event
+      operationId: EventController@create
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/Event'
+      responses:
+        "201":
+          description: Event created successfully
+          schema:
+            $ref: '#/definitions/inline_response_201_1'
+        "400":
+          description: bad input parameter
+        "422":
+          description: |
+            Invalid consentId
+definitions:
+  User:
+    type: object
+    required:
+    - email
+    properties:
+      id:
+        type: string
+        format: uuid
+      email:
+        type: string
+        format: email
+      consents:
+        type: array
+        items:
+          $ref: '#/definitions/User_consents'
+  Event:
+    required:
+    - consentId
+    - enabled
+    - userId
+    properties:
+      consentId:
+        type: string
+        enum:
+        - email_notifications
+        - sms_notifications
+      userId:
+        type: string
+        format: uuid
+      enabled:
+        type: boolean
+  body:
+    type: object
+    properties:
+      email:
+        type: string
+  inline_response_201:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      email:
+        type: string
+        format: email
+  inline_response_201_1:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      consentId:
+        type: string
+        enum:
+        - email_notifications
+        - sms_notifications
+      userId:
+        type: string
+        format: uuid
+  User_consents:
+    type: object
+    properties:
+      id:
+        type: string
+        enum:
+        - email_notifications
+        - sms_notifications
+      enabled:
+        type: boolean

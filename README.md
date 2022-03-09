@@ -18,3 +18,10 @@ CRUD User and Events
  * To test the application locally, run:
      ```bash
      npm run test
+
+ * Documentation:  (Refere to `docs.yaml` swagger file in project root)
+     ```bash
+     User@POST: 'http://localhost:8080/api/user/'
+     User@GET: 'http://localhost:8080/api/user/'
+     User@DELETE: 'http://localhost:8080/api/user/{:userId}'
+     Event@POST: 'http://localhost:8080/api/event'
