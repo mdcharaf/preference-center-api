@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { UniqueConstraintError } from 'sequelize'
 import UserController from '../../../src/api/controllers/UserController'
-import { User, Event } from '../../../src/api/models'
+import { User, Event, IUser } from '../../../src/api/models'
 import { IUserRepository } from '../../../src/api/repositories'
 import { mockResponse } from '../../utils/mocks'
 
@@ -21,7 +21,7 @@ describe('UserController', () => {
 
   const fnUUID = (): string => dummyId
   const repoMock = {
-    create: async ({ id, email }: { id: string, email: string }): Promise<User | null> => {
+    create: async ({ id, email }: IUser): Promise<User | null> => {
       const user: Partial<User> = { id, email, props: (): Partial<User> => ({ id, email }) }
       return await Promise.resolve(user as User)
     },

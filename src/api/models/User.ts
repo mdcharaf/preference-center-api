@@ -1,8 +1,13 @@
 import { Table, Column, Model, DataType, PrimaryKey, Unique, HasMany } from 'sequelize-typescript'
-import { InferAttributes, InferCreationAttributes } from 'sequelize/types'
 import { Event } from './Event'
+
+export interface IUser {
+  id?: string
+  email: string
+}
 @Table
-export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+// export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+export class User extends Model<IUser, IUser> {
   @PrimaryKey
   @Column({ type: DataType.UUID })
   public id?: string

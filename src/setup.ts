@@ -1,14 +1,21 @@
+import _ from 'lodash'
 import { Sequelize, SequelizeOptions } from 'sequelize-typescript'
 import { User, Event } from './api/models'
+import dbConfig from './config/database'
 
 export async function setupSequelize (): Promise<void> {
-  const sequelize = new Sequelize({
-    database: 'didomi', // TODO: should use environment variables with config file setup
-    host: 'localhost',
-    dialect: 'postgres'
-  } as unknown as SequelizeOptions)
+  const env: string = process.env.ENV ?? 'development'
+
+  const options: SequelizeOptions = {
+    dialect: 'postgres',
+    host: _.get(dbConfig, env).host,
+    database: _.get(dbConfig, env).database,
+    username: _.get(dbConfig, env).username,
+    password: _.get(dbConfig, env).password
+  }
 
   try {
+    const sequelize = new Sequelize(options)
     await sequelize.authenticate()
     sequelize.addModels([User, Event])
     await sequelize.sync()

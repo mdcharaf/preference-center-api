@@ -1,11 +1,12 @@
-import { Event } from '../models'
+import { Event, IEvent } from '../models'
 
 export interface IEventRepository {
-  create: ({ consentId, userId, enabled }: Event) => Promise<Event>
+  create: (event: IEvent) => Promise<Event>
 }
 
 export class EventRepository implements IEventRepository {
-  public async create ({ id, consentId, userId, enabled }: Event): Promise<Event> {
-    return await Event.create({ id, consentId, userId, enabled })
+  public async create (eventInput: IEvent): Promise<Event> {
+    const result = await Event.create(eventInput)
+    return result
   }
 }

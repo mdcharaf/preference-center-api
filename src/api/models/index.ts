@@ -1,2 +1,2 @@
-export { User } from './User'
-export { Event } from './Event'
+export { IUser, User } from './User'
+export { IEvent, Event } from './Event'

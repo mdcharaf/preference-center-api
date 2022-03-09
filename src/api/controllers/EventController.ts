@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import _ from 'lodash'
-import { Event } from '../models'
 import { ForeignKeyConstraintError } from 'sequelize'
 import { IEventRepository } from '../repositories'
 
@@ -35,8 +34,12 @@ export default class EventController {
     }
 
     try {
-      const eventInput: Partial<Event> = { id: this.fnUUID(), consentId, userId, enabled }
-      const event = await this.repo.create(eventInput as Event)
+      const event = await this.repo.create({
+        id: this.fnUUID(),
+        consentId,
+        userId,
+        enabled
+      })
 
       res.status(201).json({ ...event.props() })
     } catch (error) {

@@ -2,7 +2,7 @@
 import { Response, Request } from 'express'
 import { ForeignKeyConstraintError } from 'sequelize'
 import EventController from '../../../src/api/controllers/EventController'
-import { Event } from '../../../src/api/models'
+import { Event, IEvent } from '../../../src/api/models'
 import { IEventRepository } from '../../../src/api/repositories'
 import { mockResponse } from '../../utils/mocks'
 
@@ -14,8 +14,14 @@ describe('EventController', () => {
   ]
   const fnUUID = (): string => dummyId
   const repoMock = {
-    create: async ({ consentId, userId, enabled }: Event): Promise<Event> => {
-      const event: Partial<Event> = { id: dummyId, consentId, userId, enabled, props: (): Partial<Event> => ({ id: dummyId, consentId, userId, enabled }) }
+    create: async ({ consentId, userId, enabled }: IEvent): Promise<Event> => {
+      const event: Partial<Event> = {
+        id: dummyId,
+        consentId,
+        userId,
+        enabled,
+        props: (): Partial<Event> => ({ id: dummyId, consentId, userId, enabled })
+      }
       return await Promise.resolve(event as Event)
     }
   }
