@@ -84,6 +84,7 @@ export default class UserController {
     }
 
     try {
+      // TODO: ask whether the delete is cascaded (events should be deleted as well) or foreign key constraint is required
       await this.repo.delete(id)
       res.status(200).json({ message: 'successfully deleted' })
     } catch (error) {
