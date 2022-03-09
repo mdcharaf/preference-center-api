@@ -1,4 +1,4 @@
-# User Preference
+# Preference Center API
 
 CRUD User and Events
 
