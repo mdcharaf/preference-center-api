@@ -1,63 +1,61 @@
----
-swagger: "2.0"
+swagger: '2.0'
 info:
   description: User Preferences API
   version: 1.0.0
   title: Preference Center API
   contact:
     email: muhammad.charaf@gmail.com
-host: virtserver.swaggerhub.com
-basePath: /mdcharaf/PreferenceCenterApi/1.0.0
-schemes:
-- https
+
 paths:
   /api/user/{userId}:
     get:
       summary: gets user
+      operationId: UserController@getOne
       description: |
         Get User and corresponding events
-      operationId: UserController@getOne
       produces:
       - application/json
       parameters:
-      - name: userId
-        in: path
+      - in: path
+        name: userId
         description: required userId parameter
         required: true
         type: string
       responses:
-        "200":
+        200:
           description: Gets user and corresponding events
           schema:
             $ref: '#/definitions/User'
-        "400":
+        400:
           description: bad input parameter
-        "404":
+        404:
           description: User does not exists
     delete:
       summary: deletes user
+      operationId: UserController@delete
       description: |
         deletes user
-      operationId: UserController@delete
       produces:
       - application/json
       parameters:
-      - name: userId
-        in: path
+      - in: path
+        name: userId
         description: required userId parameter
         required: true
         type: string
       responses:
-        "200":
+        200:
           description: deletes user
-        "400":
+        400:
           description: bad input parameter
+
+    
   /api/user:
     post:
       summary: Add User
+      operationId: UserController@create
       description: |
         Inserts User
-      operationId: UserController@create
       produces:
       - application/json
       parameters:
@@ -65,24 +63,35 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/body'
+          type: object
+          properties:
+            email:
+              type: string
       responses:
-        "201":
+        201:
           description: Gets user and corresponding events
           schema:
-            $ref: '#/definitions/inline_response_201'
-        "400":
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              email:
+                type: string
+                format: email
+        400:
           description: bad input parameter
-        "422":
+        422:
           description: |
             User already exists
             Invalid email address
+            
   /api/Event:
     post:
       summary: Add Event
+      operationId: EventController@create
       description: |
         Inserts Event
-      operationId: EventController@create
       produces:
       - application/json
       parameters:
@@ -91,16 +100,28 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/Event'
+            
       responses:
-        "201":
+        201:
           description: Event created successfully
           schema:
-            $ref: '#/definitions/inline_response_201_1'
-        "400":
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              consentId:
+                type: string
+                enum: ['email_notifications', 'sms_notifications']
+              userId:
+                type: string
+                format: uuid
+        400:
           description: bad input parameter
-        "422":
+        422:
           description: |
             Invalid consentId
+      
 definitions:
   User:
     type: object
@@ -116,58 +137,29 @@ definitions:
       consents:
         type: array
         items:
-          $ref: '#/definitions/User_consents'
+          type: object
+          properties:
+            id:
+              type: string
+              enum: ['email_notifications' ,'sms_notifications']
+            enabled:
+              type: boolean
   Event:
     required:
     - consentId
-    - enabled
     - userId
+    - enabled
     properties:
       consentId:
         type: string
-        enum:
-        - email_notifications
-        - sms_notifications
+        enum: ['email_notifications', 'sms_notifications']
       userId:
         type: string
         format: uuid
       enabled:
         type: boolean
-  body:
-    type: object
-    properties:
-      email:
-        type: string
-  inline_response_201:
-    type: object
-    properties:
-      id:
-        type: string
-        format: uuid
-      email:
-        type: string
-        format: email
-  inline_response_201_1:
-    type: object
-    properties:
-      id:
-        type: string
-        format: uuid
-      consentId:
-        type: string
-        enum:
-        - email_notifications
-        - sms_notifications
-      userId:
-        type: string
-        format: uuid
-  User_consents:
-    type: object
-    properties:
-      id:
-        type: string
-        enum:
-        - email_notifications
-        - sms_notifications
-      enabled:
-        type: boolean
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /mdcharaf/PreferenceCenterApi/1.0.0
+schemes:
+ - https
