@@ -17,7 +17,7 @@ export async function setupSequelize (): Promise<void> {
   try {
     const sequelize = new Sequelize(options)
     await sequelize.authenticate()
-    sequelize.addModels([User, Event])
+    sequelize.addModels([User, Event]) // TODO: should use migrations instead but for now lets keep it simple
     await sequelize.sync()
     console.log('Connection has been established successfully')
   } catch (error) {
