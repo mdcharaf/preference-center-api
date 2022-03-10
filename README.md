@@ -13,11 +13,11 @@ CRUD User and Events
      ```
  * To run the application locally, run:
      ```bash
-     npm run dev
+     yarn dev
 
  * To test the application locally, run:
      ```bash
-     npm run test
+     yarn test
 
  * Documentation:  (Refere to `docs.yaml` swagger file in project root)
      ```bash
