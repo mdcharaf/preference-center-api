@@ -22,6 +22,6 @@ CRUD User and Events
  * Documentation:  (Refere to `docs.yaml` swagger file in project root)
      ```bash
      User@POST: 'http://localhost:8080/api/user/'
-     User@GET: 'http://localhost:8080/api/user{"userId}/'
+     User@GET: 'http://localhost:8080/api/user{:userId}'
      User@DELETE: 'http://localhost:8080/api/user/{:userId}'
      Event@POST: 'http://localhost:8080/api/event'
