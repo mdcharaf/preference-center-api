@@ -9,7 +9,7 @@ CRUD User and Events
  ### Backend API
  * To download all the package dependencies, run the command
      ```bash
-     npm install .
+     yarn
      ```
  * To run the application locally, run:
      ```bash
